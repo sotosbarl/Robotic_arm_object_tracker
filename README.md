@@ -1,4 +1,4 @@
-# Robotic_arm_classifier
+# Robotic_arm_object_tracker
 #Created by Sotiris Barlakas- Nikos Iordanidis
 The code for our scrap made robotic arm, with OpenCV object detection and tracking, inverse kinematics calculations in MATLAB and ARDUINO code.
 
