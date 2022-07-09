@@ -1,5 +1,6 @@
 # Robotic_arm_object_tracker
 #Created by Sotiris Barlakas- Nikos Iordanidis
+
 The code for our scrap made robotic arm, with OpenCV object detection and tracking, inverse kinematics calculations in MATLAB and ARDUINO code.
 
 ![alt text](https://github.com/sotosbarl/Robotic_arm_object_tracker/blob/main/robotic_arm.png)
