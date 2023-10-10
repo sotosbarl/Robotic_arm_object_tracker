@@ -1,5 +1,6 @@
 # This is the code for identifying an object (ball) as well as finding its location (x,y,z)  in 3d space
-#
+
+# Library
 import requests
 import cv2
 import imutils
@@ -9,27 +10,8 @@ import serial
 import numpy as np
 
 
-eng = matlab.engine.start_matlab()
-arduino = serial.Serial("COM8", 9600, timeout=.1)
 
-time.sleep(1) #give the connection a second to settle
-
-url1 = "http://192.168.1.32:8080/shot.jpg"          #left
-url2 = "http://192.168.1.25:8080/shot.jpg"           #right
-
-
-fx = 3.66371254e+03
-fy = 6.70809677e+03
-cx = 4.08796856e+02
-cy = 3.08194048e+02
-b = 200
-
-#cap = cv2.VideoCapture(url1)
-
-Coordinate_system_offset_x=8
-Coordinate_system_offset_y=8
-Coordinate_system_offset_z=8
-
+# Functions
 def coordinates_transformation(x_camera,y_camera,z_camera):
     x_arm = x_camera + Coordinate_system_offset_x
     y_arm = y_camera + Coordinate_system_offset_y
@@ -38,25 +20,6 @@ def coordinates_transformation(x_camera,y_camera,z_camera):
 
 def empty():
     pass
-
-
-
-cv2.namedWindow ("HSV")
-cv2.namedWindow ("parameters")
-cv2.resizeWindow('parameters',640,240)
-cv2.resizeWindow('HSV',640,240)
-
-cv2.createTrackbar('HUE Min','HSV',0,179,empty)
-cv2.createTrackbar('HUE Max','HSV',179,179,empty)
-cv2.createTrackbar('SAT Min','HSV',0,255,empty)
-cv2.createTrackbar('SAT Max','HSV',255,255,empty)
-cv2.createTrackbar('Value Min','HSV',0,255,empty)
-cv2.createTrackbar('Value Max','HSV',255,255,empty)
-
-cv2.createTrackbar('threshold1','parameters',0,255,empty)
-cv2.createTrackbar('threshold2','parameters',0,255,empty)
-approx=0
-
 
 def getContours(img,imgContour):
     x=0
@@ -99,6 +62,49 @@ def getContours(img,imgContour):
     return x, y, flag1
 
 
+
+eng = matlab.engine.start_matlab()
+arduino = serial.Serial("COM8", 9600, timeout=.1)
+
+time.sleep(1) #give the connection a second to settle
+
+url1 = "http://192.168.1.32:8080/shot.jpg"          #left
+url2 = "http://192.168.1.25:8080/shot.jpg"           #right
+
+
+fx = 3.66371254e+03
+fy = 6.70809677e+03
+cx = 4.08796856e+02
+cy = 3.08194048e+02
+b = 200
+
+#cap = cv2.VideoCapture(url1)
+
+Coordinate_system_offset_x=8
+Coordinate_system_offset_y=8
+Coordinate_system_offset_z=8
+
+
+
+cv2.namedWindow ("HSV")
+cv2.namedWindow ("parameters")
+cv2.resizeWindow('parameters',640,240)
+cv2.resizeWindow('HSV',640,240)
+
+cv2.createTrackbar('HUE Min','HSV',0,179,empty)
+cv2.createTrackbar('HUE Max','HSV',179,179,empty)
+cv2.createTrackbar('SAT Min','HSV',0,255,empty)
+cv2.createTrackbar('SAT Max','HSV',255,255,empty)
+cv2.createTrackbar('Value Min','HSV',0,255,empty)
+cv2.createTrackbar('Value Max','HSV',255,255,empty)
+
+cv2.createTrackbar('threshold1','parameters',0,255,empty)
+cv2.createTrackbar('threshold2','parameters',0,255,empty)
+approx=0
+
+
+
+
 while True:
     page = ''
     while page == '':
@@ -106,11 +112,11 @@ while True:
             page = requests.get(url1)
             break
         except:
-            print("Connection refused by the server..")
-            print("Let me sleep for 5 seconds")
-            print("ZZzzzz...")
+            print("Connection refused by the server...")
+            print("Give me 5 seconds")
+            print("Loading...")
             time.sleep(5)
-            print("Was a nice sleep, now let me continue...")
+            print("Ok! Lets continue")
             continue
     img_resp=page
     img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
@@ -180,11 +186,11 @@ while True:
             page2 = requests.get(url2)
             break
         except:
-            print("Connection refused by the server..")
-            print("Let me sleep for 5 seconds")
-            print("ZZzzzz...")
+            print("Connection refused by the server...")
+            print("Give me 5 seconds")
+            print("Loading...")
             time.sleep(5)
-            print("Was a nice sleep, now let me continue...")
+            print("Ok! Lets continue")
             continue
     img_resp2=page2
     img_arr2 = np.array(bytearray(img_resp2.content), dtype=np.uint8)
@@ -262,7 +268,7 @@ while True:
 
 
 #if ball is identified in both cameras then, using the stereo setup equations we can calculate ball's position with
-    # respect to global coordinates frame.
+# respect to global coordinates frame.
     if flag1 != 0 and flag2 != 0:
         X = b * (ul - cx) / (ul - ur)
         Y = b * fx * (vl - cy) / (fy * (ul - ur))
@@ -294,8 +300,8 @@ while True:
         print('x=', x)
         print('z', z)
 
-    #Next, we send the ball's coordinates to matlab to calculate (using inverse kinematics) the desired servo angles in
-    #in order for the arm's end to catch the ball
+#Next, we send the ball's coordinates to matlab to calculate (using inverse kinematics) the desired servo angles in
+#in order for the arm's end to catch the ball
         out = eng.Robot_catch_me(x, z, 0, 0, 0, nargout=3)
 
         print('theta', out[0])
