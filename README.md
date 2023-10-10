@@ -22,7 +22,7 @@ More specifically, the ball is firstly detected (2d coordinates) in each camera 
 We then transform this position to the robot's base coordinate frame. The "target" position is then sent to our Matlab function, where the appropriate arm's angles are calculated in order for the arm's grip to move to the "target" position. This procedure is generally called inverse kinematics.
 Finally, the appropriate angles are sent to arduino with Serial Communication and are executed by our hardware.
 
-## Execution diagram
+## Workflow diagram
 ![alt text](https://github.com/sotosbarl/Robotic_arm_object_tracker/blob/main/Project%20Workflow.png)
 
 See the robot in action: 
